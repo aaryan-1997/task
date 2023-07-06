@@ -1,6 +1,9 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
 
 class Task {
   Future<List<TaskModel>> getTaskData() async {
@@ -44,6 +47,17 @@ class Task {
       log("_error_create_task=>$e");
       return false;
     }
+  }
+
+  Future<String> uploadImage(XFile file) async {
+    FirebaseStorage storage = FirebaseStorage.instance;
+    Reference reference = storage.ref().child("images/");
+
+    UploadTask uploadTask = reference.putFile(File(file.path));
+    final storageSnapshot = uploadTask.snapshot;
+
+    final downloadUrl = await storageSnapshot.ref.getDownloadURL();
+    return downloadUrl;
   }
 }
 
