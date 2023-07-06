@@ -35,7 +35,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   List<TaskModel> taslList = [];
-  bool isChecked=false;
+  bool isChecked = false;
   @override
   void initState() {
     getTask();
@@ -54,7 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Task"),
+        title: const Text("Task"),
         elevation: 0,
       ),
       body: Center(
@@ -64,18 +64,16 @@ class _MyHomePageState extends State<MyHomePage> {
               child: ListView.builder(
                   itemCount: taslList.length,
                   itemBuilder: (context, index) {
-                    return Container(
-                      child: CheckboxListTile(
-                        onChanged: (value) {
-                          // setState(() {
-                          //   isChecked=value!;
-                          // });
-                        },
-                        value: false,
-                        title: Text(
-                          '${taslList[index].title}',
-                          style: TextStyle(fontSize: 15),
-                        ),
+                    return CheckboxListTile(
+                      onChanged: (value) async {
+                        await Task()
+                            .updateTask(taslList[index].id)
+                            .then((value) => getTask());
+                      },
+                      value: false,
+                      title: Text(
+                        '${taslList[index].title}',
+                        style: const TextStyle(fontSize: 15),
                       ),
                     );
                   }),
@@ -86,8 +84,8 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context)
-              .push(MaterialPageRoute(builder: (_) => AddTask()))
-              .then((value) => getTask());
+              .push(MaterialPageRoute(builder: (_) => const AddTask()))
+              .whenComplete(() => getTask());
         },
         tooltip: 'Add task',
         child: const Icon(Icons.add),
@@ -109,7 +107,7 @@ class _AddTaskState extends State<AddTask> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Add Task"),
+        title: const Text("Add Task"),
         elevation: 0,
       ),
       body: Padding(
@@ -119,16 +117,16 @@ class _AddTaskState extends State<AddTask> {
           children: <Widget>[
             Container(
               alignment: Alignment.center,
-              padding: EdgeInsets.only(left: 15),
-              child: Text(
+              padding: const EdgeInsets.only(left: 15),
+              child: const Text(
                 'Title',
                 style: TextStyle(fontSize: 18),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextFormField(
               controller: titleController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 isDense: true,
                 focusedBorder: OutlineInputBorder(),
                 enabledBorder: OutlineInputBorder(),
@@ -145,14 +143,14 @@ class _AddTaskState extends State<AddTask> {
                   await Task().createTask(task).then((value) {
                     if (value) {
                       Navigator.pop(context);
-                    }else{
-                      ScaffoldMessenger.of(context)
-                          .showSnackBar(SnackBar(content: Text("Task not added!")));
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Task not added!")));
                     }
                   });
                 } else {
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text("Title required")));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Title required")));
                 }
               },
               child: Container(
